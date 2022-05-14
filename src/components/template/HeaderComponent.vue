@@ -14,7 +14,7 @@
               <router-link class="nav-link" to="/sunhj">공사중</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/about">준비중2</router-link>
+              <router-link class="nav-link" to="/tissue">CABO</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/about">로그인테스트</router-link>
