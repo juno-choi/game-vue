@@ -70,7 +70,7 @@
                       <p class="card-text">
                         <b>{{m.name}}</b>{{m.content}}
                       </p>
-                      <button type="button" class="btn btn-secondary">버튼</button>
+                      <button type="button" class="btn btn-secondary" @click="test">버튼</button>
                     </div>
                   </div>
                 </GMapInfoWindow>
@@ -90,6 +90,7 @@ import axios from "axios";
 import jayeon from "@/axios/jayeon-axios";
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
+import router from '@/router';
 
 export default {
   name: 'EatsComponent',
@@ -222,7 +223,24 @@ export default {
     //marker open infoWindow
     openMarker(idx){
       this.openedMarkerID = idx;
-    }
+    },
+    //로그인 후 사용할 수 있는 기능 테스트
+    test(){
+      jayeon.get('/member/tokenCheck')
+      .then(res => {
+        console.log(res);
+        if(res.status == '200'){
+            alert('정상실행');
+        }
+      })
+      .catch((err) => {
+        if(err.response.status == 401){
+          alert('로그인 후 다시 시도해 주세요.');
+          router.push({name:'login'});
+        }
+        console.log(err);
+      })
+    },
   },
   
   
