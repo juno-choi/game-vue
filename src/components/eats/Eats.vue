@@ -30,9 +30,9 @@
           <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
             <h2 class="mb-4 display-6 lh-1 fw-bold">2. 검색</h2>
             <p class="fs-5">검색어를 입력해주세요.</p>
-            <div class="col-md-12"><input class="form-control text-center" type="text" id="keyword" v-on:keyup.enter="makeMarkersSelect" placeholder="ex) 대학교, 병원, 중국집, 한식 ..."/></div>
-            <div class="col-md-12 mt-1 mb-1"><input class="form-control text-center" type="number" v-on:keyup.enter="makeMarkersSelect" id="radius" placeholder="거리 입력 (m기준 / 기본 500m 반경, 최대 50,000m 검색)"/></div>
-            <button class="btn btn-primary" @click="makeMarkersSelect">뽑기</button>
+            <div class="col-md-12"><input class="form-control text-center" type="text" id="keyword" v-on:keyup.enter="makeMarkersSelect" placeholder="검색 키워드"/></div>
+            <div class="col-md-12 mt-1 mb-1"><input class="form-control text-center" type="number" v-on:keyup.enter="makeMarkersSelect" id="radius" placeholder="기본 500m , 최대 50,000m"/></div>
+            <button class="btn btn-primary" @click="makeMarkersSelect">검색</button>
             <ul class="d-flex list-unstyled mt-auto">
               <li class="me-auto">
               </li>
@@ -52,23 +52,37 @@
       <div class="col">
         <div class="card card-cover h-100 overflow-hidden rounded-5 shadow-lg">
           <div class="d-flex flex-column h-100  text-shadow-1">
-            <GMapMap id="googleMap" :center="center" :zoom="16" style="width: 100%; height: 500px">
-              <GMapMarker :key="index" v-for="(m, index) in markers" :position="m.position" :clickable="true" :draggable="false" @click="openMarker(m.idx)">
+            <GMapMap id="googleMap" :center="center" :zoom="16" map-type-id="roadmap" style="width: 100%; height: 500px">
+              <!-- 현재 위치 -->
+              <GMapMarker :position="center" :clickable="true" :draggable="false"
+              :icon="{
+                url: require('@/images/google/marker/starred.png'),
+                scaledSize: {width: 50, height: 50}
+              }"
+              >
+              </GMapMarker>
+              <!-- 출력 데이터 -->
+              <GMapMarker :key="index" v-for="(m, index) in markers" :position="m.position" :clickable="true" :draggable="false" @click="openMarker(m.idx)"
+              :icon="{
+                url: require('@/images/google/marker/love.png'),
+                scaledSize: {width: 50, height: 50}
+              }"
+              >
                 <GMapInfoWindow :opened="openedMarkerID === m.idx">
-                  <div class="card">
-                    <div class="card-header">
-                      영업 상태 : {{m.opennow}}
-                    </div>
-                    <div class="card-body">
-                      <h5 class="card-title">{{m.name}}</h5>
-                      <p class="card-text">
-                        평점 : {{m.rating}} (총 리뷰 {{m.userRatingsTotal}} 건)
+                  <div>
+                    <div>
+                      <h5><a :href="`https://www.google.com/search?q=${m.content} ${m.name}`" target="_blank">{{m.name}}</a></h5>
+                      <p>
+                        🍽️ {{m.opennow}}
                       </p>
-                      <p class="card-text">
-                        가격대 : {{m.priceLevel}}
+                      <p>
+                        ⭐ {{m.rating}} (총 리뷰 {{m.userRatingsTotal}} 건)
                       </p>
-                      <p class="card-text">
-                        <b>{{m.name}}</b>{{m.content}}
+                      <p>
+                        💵 {{m.priceLevel}}
+                      </p>
+                      <p>
+                        {{m.content}}
                       </p>
                       <button type="button" class="btn btn-secondary" @click="test">버튼</button>
                     </div>
@@ -171,6 +185,7 @@ export default {
       }
       await jayeon.post('/google/places',data)
       .then(async res =>{
+        console.log(res);
         const result = res.data;
         if(result.status == 'ZERO_RESULTS'){
           alert('일치하는 결과가 존재하지 않습니다!');
